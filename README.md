@@ -1,2 +1,2 @@
 # FTPClient-Library
-just practicing some cpp
+This is a simple FTP client library created in C++.
