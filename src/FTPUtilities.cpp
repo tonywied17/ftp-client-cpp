@@ -4,7 +4,7 @@
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Thu January 23rd 2025 6:37:00 
+ * Last Modified: Thu January 23rd 2025 10:17:56 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
@@ -30,6 +30,34 @@ namespace ftp_library {
             return !std::isspace(ch);
         }).base(), result.end());
         return result;
+    }
+
+    //! Convert a string to lowercase
+    // @param input The string to convert
+    // @return The lowercase version of the input string
+    std::string FTPUtilities::toLowerCase(const std::string &input)
+    {
+        std::string result = input;
+        std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c) { return std::tolower(c); });
+        return result;
+    }
+
+    //! Check if a string starts with a prefix
+    // @param input The string to check
+    // @param prefix The prefix to check for
+    // @return True if the string starts with the prefix, false otherwise
+    bool FTPUtilities::startsWith(const std::string &input, const std::string &prefix)
+    {
+        return input.size() >= prefix.size() && input.compare(0, prefix.size(), prefix) == 0;
+    }
+
+    //! Check if a string ends with a suffix
+    // @param input The string to check
+    // @param suffix The suffix to check for
+    // @return True if the string ends with the suffix, false otherwise
+    bool FTPUtilities::endsWith(const std::string &input, const std::string &suffix)
+    {
+        return input.size() >= suffix.size() && input.compare(input.size() - suffix.size(), suffix.size(), suffix) == 0;
     }
 
     //! Convert a string to lowercase

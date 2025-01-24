@@ -4,7 +4,7 @@
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Thu January 23rd 2025 6:36:40 
+ * Last Modified: Thu January 23rd 2025 10:51:17 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
@@ -15,11 +15,9 @@
 #include "FTPUtilities.h"
 #include <iostream>
 #include <stdexcept>
-#include <cstring> 
-#include <winsock2.h> 
-#include <ws2tcpip.h>
-#include <unistd.h>
+#include <cstring>
 #include <algorithm>
+#include <memory>
 
 namespace ftp_library {
 
@@ -35,27 +33,25 @@ namespace ftp_library {
         if (m_connected) {
             disconnect();
         }
-        cleanupWinsock(); 
+        cleanupWinsock();
     }
 
-    //! Move Constructor
-    // @param other The FTPClient object to move
+    //! Move constructor
     FTPClient::FTPClient(FTPClient&& other) noexcept
-        : m_socket(other.m_socket), m_connected(other.m_connected), m_host(std::move(other.m_host)), 
-        m_port(other.m_port), m_remoteDir(std::move(other.m_remoteDir)) {
+        : m_socket(other.m_socket), m_connected(other.m_connected), m_host(std::move(other.m_host)),
+          m_port(other.m_port), m_remoteDir(std::move(other.m_remoteDir)) {
         other.m_socket = -1;
         other.m_connected = false;
     }
 
-    //! Move Assignment Operator
+    //! Move assignment
     // @param other The FTPClient object to move
-    // @return A reference to the moved FTPClient object
+    // @return A reference to the moved object
     FTPClient& FTPClient::operator=(FTPClient&& other) noexcept {
         if (this != &other) {
             if (m_connected) {
                 disconnect();
             }
-
             m_socket = other.m_socket;
             m_connected = other.m_connected;
             m_host = std::move(other.m_host);
@@ -81,16 +77,16 @@ namespace ftp_library {
         WSACleanup();
     }
 
-    //! Connect to the FTP server
-    // @param host The hostname or IP address of the FTP server
-    // @param port The port number of the FTP server (default is 21)
+    //! Connect to an FTP server
+    // @param host The hostname or IP address of the server
+    // @param port The port number to connect to (default is 21)
     void FTPClient::connect(const std::string& host, uint16_t port) {
-        m_host = host;
+        m_host = FTPUtilities::trim(host); 
         m_port = port;
 
         addrinfo hints = {};
-        hints.ai_family = AF_INET;  //? IPv4
-        hints.ai_socktype = SOCK_STREAM;  //? TCP
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
         hints.ai_protocol = IPPROTO_TCP;
 
         addrinfo* result = nullptr;
@@ -99,24 +95,21 @@ namespace ftp_library {
             throw FTPException("Failed to resolve server address.");
         }
 
-        //* Create a socket
         m_socket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
         if (m_socket < 0) {
             freeaddrinfo(result);
             throw FTPException("Failed to create socket.");
         }
 
-        //* Connect to the server
         res = ::connect(m_socket, result->ai_addr, result->ai_addrlen);
-        freeaddrinfo(result); 
+        freeaddrinfo(result);
         if (res < 0) {
             throw FTPException("Failed to connect to the server.");
         }
 
-        //* Receive the welcome message
         std::string response = receiveResponse();
+        response = FTPUtilities::trim(response); 
         m_connected = true;
-
         validateResponse(response, {220});
         std::cout << "Connected to FTP server: " << m_host << std::endl;
     }
@@ -125,29 +118,25 @@ namespace ftp_library {
     // @param username The username to authenticate with
     // @param password The password to authenticate with
     void FTPClient::authenticate(const std::string& username, const std::string& password) {
-        //* Send USER command
-        sendCommand("USER " + username);
+        sendCommand("USER " + FTPUtilities::trim(username)); 
         std::string response = receiveResponse();
         validateResponse(response, {331});
 
-        //* Send PASS command
-        sendCommand("PASS " + password);
+        sendCommand("PASS " + FTPUtilities::trim(password));
         response = receiveResponse();
         validateResponse(response, {230});
-
         std::cout << "Authentication successful." << std::endl;
     }
 
-    //! Get a list of files and directories from the current working directory or specified remoteDir
-    // @param remoteDir The remote directory to list (default is "/")
-    // @return A vector of strings containing the directory listing
+    //! Get a list of files and directories in the current working directory
+    // @return A vector of strings containing the names of the files and directories
     std::vector<std::string> FTPClient::listDirectory(const std::string& remoteDir) {
-
-        m_remoteDir = remoteDir.empty() ? "/" : remoteDir;
+        m_remoteDir = FTPUtilities::trim(remoteDir.empty() ? "/" : remoteDir);
 
         sendCommand("PASV");
         std::string response = receiveResponse();
         validateResponse(response, {227});
+
         auto [ip, port] = FTPUtilities::parsePassiveModeResponse(response);
         int dataSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (dataSocket < 0) {
@@ -160,21 +149,19 @@ namespace ftp_library {
         inet_pton(AF_INET, ip.c_str(), &dataAddr.sin_addr);
 
         if (::connect(dataSocket, (struct sockaddr*)&dataAddr, sizeof(dataAddr)) < 0) {
+            closesocket(dataSocket);
             throw FTPException("Failed to connect to passive mode address.");
         }
 
-        //* Change the remote directory
-        sendCommand("CWD " + m_remoteDir);
+        sendCommand("CWD " + FTPUtilities::toLowerCase(m_remoteDir)); 
         response = receiveResponse();
         validateResponse(response, {250});
 
-        //* Send LIST command
         sendCommand("LIST");
         response = receiveResponse();
         validateResponse(response, {150});
 
-        //* Receive the directory listing
-        char buffer[1024] = {0};
+        char buffer[1024];
         std::string directoryListing;
         ssize_t bytesRead;
 
@@ -182,7 +169,7 @@ namespace ftp_library {
             directoryListing.append(buffer, bytesRead);
         }
 
-        close(dataSocket);
+        closesocket(dataSocket);
 
         response = receiveResponse();
         validateResponse(response, {226});
@@ -190,27 +177,21 @@ namespace ftp_library {
         return FTPUtilities::splitString(directoryListing, '\n');
     }
 
-    //! Download a file
-    // @param remoteFilePath The path of the file to download
-    // @param localFilePath The path to save the downloaded file
-    void FTPClient::downloadFile(const std::string& remoteFilePath, std::string localFilePath) {
+    //! Download a file from the server
+    // @param remoteFilePath The path to the file on the server
+    // @param localFilePath The path to save the file locally
+    void FTPClient::downloadFile(const std::string& remoteFilePath, const std::string localFilePath) {
         std::string fileName = remoteFilePath.substr(remoteFilePath.find_last_of("/\\") + 1);
+        std::string resolvedPath = localFilePath.empty() ? "./" + fileName : localFilePath;
 
-        //* If localFilePath is empty or ".", use the current directory
-        if (localFilePath == "." || localFilePath.empty()) {
-            localFilePath = "./" + fileName;  
-        } else {
-            //* If a directory is provided append the filename to it
-            // @TODO: Ensure provided path is a directory otherwise allow filename to be specified
-            if (localFilePath.back() != '\\' && localFilePath.back() != '/') {
-                localFilePath += "/"; 
-            }
-            localFilePath += fileName; 
+        if (!FTPUtilities::endsWith(resolvedPath, fileName)) {
+            resolvedPath += "/" + fileName;  // Ensure valid file path
         }
 
         sendCommand("PASV");
         std::string response = receiveResponse();
         validateResponse(response, {227});
+
         auto [ip, port] = FTPUtilities::parsePassiveModeResponse(response);
         int dataSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (dataSocket < 0) {
@@ -223,22 +204,20 @@ namespace ftp_library {
         inet_pton(AF_INET, ip.c_str(), &dataAddr.sin_addr);
 
         if (::connect(dataSocket, (struct sockaddr*)&dataAddr, sizeof(dataAddr)) < 0) {
+            closesocket(dataSocket);
             throw FTPException("Failed to connect to passive mode address.");
         }
 
-        //* Send RETR to retrieve the file
-        sendCommand("RETR " + remoteFilePath);
+        sendCommand("RETR " + FTPUtilities::trim(remoteFilePath));
         response = receiveResponse();
         validateResponse(response, {150});
 
-        //* Open the local file for writing
-        FILE* localFile = fopen(localFilePath.c_str(), "wb");
+        FILE* localFile = fopen(resolvedPath.c_str(), "wb");
         if (!localFile) {
-            close(dataSocket);
-            throw FTPException("Failed to open local file for writing: " + localFilePath);
+            closesocket(dataSocket);
+            throw FTPException("Failed to open local file for writing: " + resolvedPath);
         }
 
-        //* Receive the file data
         char buffer[1024];
         ssize_t bytesRead;
 
@@ -247,21 +226,21 @@ namespace ftp_library {
         }
 
         fclose(localFile);
-        close(dataSocket);
+        closesocket(dataSocket);
 
         response = receiveResponse();
         validateResponse(response, {226});
-
-        std::cout << "File downloaded successfully: " << localFilePath << std::endl;
+        std::cout << "File downloaded successfully: " << resolvedPath << std::endl;
     }
 
-    //! Upload a file
-    // @param localFilePath The path of the file to upload
-    // @param remoteFilePath The path to save the uploaded file on the server
+    //! Upload a file to the server
+    // @param localFilePath The path to the file to upload
+    // @param remoteFilePath The path to save the file on the server
     void FTPClient::uploadFile(const std::string& localFilePath, const std::string& remoteFilePath) {
         sendCommand("PASV");
         std::string response = receiveResponse();
         validateResponse(response, {227});
+
         auto [ip, port] = FTPUtilities::parsePassiveModeResponse(response);
         int dataSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (dataSocket < 0) {
@@ -274,86 +253,79 @@ namespace ftp_library {
         inet_pton(AF_INET, ip.c_str(), &dataAddr.sin_addr);
 
         if (::connect(dataSocket, (struct sockaddr*)&dataAddr, sizeof(dataAddr)) < 0) {
+            closesocket(dataSocket);
             throw FTPException("Failed to connect to passive mode address.");
         }
 
-        //* Send STOR command
-        sendCommand("STOR " + remoteFilePath);
+        sendCommand("STOR " + FTPUtilities::toLowerCase(remoteFilePath));
         response = receiveResponse();
         validateResponse(response, {150});
 
-        //* Open
         FILE* localFile = fopen(localFilePath.c_str(), "rb");
         if (!localFile) {
-            close(dataSocket);
+            closesocket(dataSocket);
             throw FTPException("Failed to open local file for reading: " + localFilePath);
         }
 
-        //* Send
         char buffer[1024];
         ssize_t bytesRead;
+
         while ((bytesRead = fread(buffer, 1, sizeof(buffer), localFile)) > 0) {
             if (send(dataSocket, buffer, bytesRead, 0) < 0) {
                 fclose(localFile);
-                close(dataSocket);
+                closesocket(dataSocket);
                 throw FTPException("Failed to send file data.");
             }
         }
 
-        // @TODO: Fix closing after upload
-
         fclose(localFile);
-        close(dataSocket);
+        closesocket(dataSocket);
 
         response = receiveResponse();
         validateResponse(response, {226});
-
-        sendCommand("QUIT");
-        response = receiveResponse();
-        validateResponse(response, {221});
-
-        close(m_socket);
-
         std::cout << "File uploaded successfully: " << remoteFilePath << std::endl;
     }
 
-
-    //! Disconnect from the server
+    //! Disconnect from the FTP server
     void FTPClient::disconnect() {
         if (m_connected) {
             sendCommand("QUIT");
-            close(m_socket);
+            closesocket(m_socket);
             m_connected = false;
             std::cout << "Disconnected from FTP server." << std::endl;
         }
     }
 
-    //! Private Helper: Send a command to the server
+    //! Send a command to the server
     // @param command The command to send
     void FTPClient::sendCommand(const std::string& command) {
-        std::string commandWithCRLF = command + "\r\n";
+        std::string commandWithCRLF = FTPUtilities::trim(command) + "\r\n";
         if (send(m_socket, commandWithCRLF.c_str(), commandWithCRLF.size(), 0) < 0) {
             throw FTPException("Failed to send command: " + command);
         }
     }
 
-    //! Private Helper: Receive a response from the server
+    //! Receive and return server response
     // @return The server response as a string
     std::string FTPClient::receiveResponse() {
-        char buffer[1024] = {0};
+        char buffer[1024];
         ssize_t bytesRead = recv(m_socket, buffer, sizeof(buffer) - 1, 0);
         if (bytesRead < 0) {
             throw FTPException("Failed to receive response.");
         }
-        return std::string(buffer, bytesRead);
+        std::string response(buffer, bytesRead);
+        return FTPUtilities::trim(response); 
     }
 
-    //! Private Helper: Validate server responses
+    //! Validate server response
     // @param response The server response to validate
     // @param expectedCodes A vector of expected response codes
     void FTPClient::validateResponse(const std::string& response, const std::vector<int>& expectedCodes) {
         auto [code, message] = FTPResponseParser::parseResponse(response);
-        std::cout << "Received response: " << code << " - " << message << std::endl;
+
+        if (!FTPResponseParser::isExpectedCode(response, code)) {
+            throw FTPException("Unexpected response code: " + std::to_string(code) + " - " + message);
+        }
 
         if (std::find(expectedCodes.begin(), expectedCodes.end(), code) == expectedCodes.end()) {
             throw FTPException("Unexpected response code: " + std::to_string(code) + " - " + message);

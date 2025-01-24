@@ -4,7 +4,7 @@
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Thu January 23rd 2025 6:34:49 
+ * Last Modified: Thu January 23rd 2025 10:50:10 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
@@ -16,6 +16,26 @@
 #include "FTPClient.h"
 #include "FTPUtilities.h"
 
+//! Check if the client is connected to the server
+//! @param connected True if connected, false otherwise
+//! @return True if connected, false otherwise
+bool isConnected(bool connected) {
+    if (!connected) {
+        std::cout << "You must connect to a server first.\n";
+        return false;
+    }
+    return true;
+}
+
+//! Get a file path from the user./F
+//! @param filePath The file path to get
+//! @param prompt The prompt to display to the user
+void getFilePath(std::string& filePath, const std::string& prompt) {
+    std::cout << prompt;
+    std::getline(std::cin, filePath);
+}
+
+//! Print the menu options
 void printMenu() {
     std::cout << "FTP Client Menu:\n";
     std::cout << "1. Connect to server\n";
@@ -31,7 +51,6 @@ void printMenu() {
 //! Main function
 int main() {
     try {
-        //* Instantiate the FTP client
         ftp_library::FTPClient ftpClient;
         std::string host;
         uint16_t port = 21;
@@ -49,33 +68,24 @@ int main() {
             switch (choice) {
                 case 1: {
                     //* Connect to the FTP server
-                    std::cout << "Enter server host: ";
-                    std::getline(std::cin, host);
+                    getFilePath(host, "Enter server host: ");
                     ftpClient.connect(host, port);
                     connected = true;
                     break;
                 }
 
                 case 2: {
-                    if (!connected) {
-                        std::cout << "You must connect to a server first.\n";
-                        break;
-                    }
+                    if (!isConnected(connected)) break;
 
                     //* Authenticate with the server
-                    std::cout << "Enter username: ";
-                    std::getline(std::cin, username);
-                    std::cout << "Enter password: ";
-                    std::getline(std::cin, password);
+                    getFilePath(username, "Enter username: ");
+                    getFilePath(password, "Enter password: ");
                     ftpClient.authenticate(username, password);
                     break;
                 }
 
                 case 3: {
-                    if (!connected) {
-                        std::cout << "You must connect to a server first.\n";
-                        break;
-                    }
+                    if (!isConnected(connected)) break;
 
                     //* List directory
                     std::vector<std::string> files = ftpClient.listDirectory(remoteDir);
@@ -87,20 +97,12 @@ int main() {
                 }
 
                 case 4: {
-                    if (!connected) {
-                        std::cout << "You must connect to a server first.\n";
-                        break;
-                    }
+                    if (!isConnected(connected)) break;
 
                     //* Download file
                     std::string remoteFile, localFile;
-                    std::cout << "Enter the remote file path to download: ";
-                    std::getline(std::cin, remoteFile); 
-                    std::cout << "Enter the local file path to save (use . or leave blank for current directory): ";
-                    std::getline(std::cin, localFile);
-
-                    //* If a directory is provided append the filename to it
-                    // @TODO: Ensure provided path is a directory otherwise allow filename to be specified
+                    getFilePath(remoteFile, "Enter the remote file path to download: ");
+                    getFilePath(localFile, "Enter the local file path to save (use . or leave blank for current directory): ");
                     if (localFile == ".") {
                         localFile = "./" + remoteFile.substr(remoteFile.find_last_of("/") + 1);
                     }
@@ -109,26 +111,18 @@ int main() {
                 }
 
                 case 5: {
-                    if (!connected) {
-                        std::cout << "You must connect to a server first.\n";
-                        break;
-                    }
+                    if (!isConnected(connected)) break;
 
                     //* Upload file
                     std::string localFile, remoteFile;
-                    std::cout << "Enter the local file path to upload: ";
-                    std::getline(std::cin, localFile);
-                    std::cout << "Enter the remote file path to save as: ";
-                    std::getline(std::cin, remoteFile); 
+                    getFilePath(localFile, "Enter the local file path to upload: ");
+                    getFilePath(remoteFile, "Enter the remote file path to save as: ");
                     ftpClient.uploadFile(localFile, remoteFile);
                     break;
                 }
 
                 case 6: {
-                    if (!connected) {
-                        std::cout << "You must connect to a server first.\n";
-                        break;
-                    }
+                    if (!isConnected(connected)) break;
 
                     //* Disconnect from the server
                     ftpClient.disconnect();
@@ -136,15 +130,11 @@ int main() {
                     break;
                 }
 
-                case 7: { 
-                    if (!connected) {
-                        std::cout << "You must connect to a server first.\n";
-                        break;
-                    }
+                case 7: {
+                    if (!isConnected(connected)) break;
 
                     //* Change remote directory
-                    std::cout << "Enter the new remote directory: ";
-                    std::getline(std::cin, remoteDir);
+                    getFilePath(remoteDir, "Enter the new remote directory: ");
                     std::cout << "Changed remote directory to: " << remoteDir << std::endl;
                     break;
                 }
