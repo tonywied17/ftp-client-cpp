@@ -1,44 +1,47 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(FTPClient VERSION 1.0)
+project(ftp_client VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-include(FetchContent)
-FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG release-1.10.0 
-)
-FetchContent_MakeAvailable(googletest)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
-
-set(SOURCES
+set(LIBRARY_SOURCES
     src/FTPClient.cpp
     src/FTPResponseParser.cpp
     src/FTPUtilities.cpp
-    main.cpp
 )
 
-include_directories(include)
+add_executable(ftpclient FTPClientApp.cpp ${LIBRARY_SOURCES})
+add_library(ftpclient_shared SHARED ${LIBRARY_SOURCES})
 
-add_executable(FTPClientApp ${SOURCES})
+target_link_libraries(ftpclient PRIVATE Ws2_32)
+target_link_libraries(ftpclient_shared PRIVATE Ws2_32)
 
-if(WIN32)
-    target_link_libraries(FTPClientApp PRIVATE Ws2_32)
-endif()
-
-enable_testing()
-
-set(TEST_SOURCES
-    tests/FTPClientTest.cpp
-    tests/FTPResponseParserTest.cpp
-    tests/FTPUtilitiesTest.cpp
+set_target_properties(ftpclient PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 
-add_executable(FTPClientTests ${TEST_SOURCES})
+set_target_properties(ftpclient_shared PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+    PREFIX ""
+)
 
-target_link_libraries(FTPClientTests gtest gtest_main)
+add_custom_command(TARGET ftpclient_shared POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:ftpclient_shared>
+        ${CMAKE_BINARY_DIR}/lib/ftpclient_shared.dll
+)
 
-add_test(NAME FTPClientTests COMMAND FTPClientTests)
+add_custom_command(TARGET ftpclient POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E sleep 5
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/CMakeFiles
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/CMakeCache.txt
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/build.ninja
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/cmake_install.cmake
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/ftpclient_shared.dll
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/libftpclient_shared.dll.a
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/.ninja_deps
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/.ninja_log
+)
