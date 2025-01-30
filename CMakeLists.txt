@@ -8,12 +8,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(LIBRARY_SOURCES
-    src/FTPClient.cpp
-    src/FTPResponseParser.cpp
-    src/FTPUtilities.cpp
+    include/ftp_library/FTPClient.cpp
+    include/ftp_library/FTPResponseParser.cpp
+    include/ftp_library/FTPUtilities.cpp
 )
 
 add_executable(ftpclient FTPClientApp.cpp ${LIBRARY_SOURCES})
+
 add_library(ftpclient_shared SHARED ${LIBRARY_SOURCES})
 
 target_link_libraries(ftpclient PRIVATE Ws2_32)

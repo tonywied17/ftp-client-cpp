@@ -13,8 +13,6 @@ This project contains an FTP client library and an example application demonstra
     - `FTPClient.h`: Header for the FTP client class.
     - `FTPResponseParser.h`: Header for the FTP response parser class.
     - `FTPUtilities.h`: Header for utility functions used in the library.
-  
-- **src/**: Contains the source files for the library and the example application.
     - `FTPClient.cpp`: Contains the implementation of the FTP client class.
     - `FTPResponseParser.cpp`: Contains the implementation of the FTP response parser class.
     - `FTPUtilities.cpp`: Contains the implementation of utility functions.
@@ -54,6 +52,7 @@ To use the FTP client library, include the headers in your project:
 #include <ftp_library/FTPClient.h>
 #include <ftp_library/FTPResponseParser.h>
 #include <ftp_library/FTPUtilities.h>
+
 ```
 
 Example usage is provided in the `FTPClientApp.cpp` file. This example demonstrates how to use the FTP client to connect to an FTP server and perform various operations.
