@@ -7,7 +7,6 @@ BIN_DIR = build/bin
 LIB_DIR = build/lib
 OBJ_DIR = build/obj
 BUILD_DIR = build
-
 LIBRARY_SOURCES = $(SRC_DIR)/FTPClient.cpp $(SRC_DIR)/FTPResponseParser.cpp $(SRC_DIR)/FTPUtilities.cpp
 EXEC_SOURCES = FTPClientApp.cpp $(LIBRARY_SOURCES)
 
