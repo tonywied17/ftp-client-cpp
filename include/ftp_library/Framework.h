@@ -1,9 +1,13 @@
 //
+// Project headers
+//
 #include <ftp_library/FTPClient.h>
 #include <ftp_library/FTPResponseParser.h>
 #include <ftp_library/FTPUtilities.h>
 
-// 
+//
+// Standard library headers
+//
 #include <iostream>
 #include <stdexcept>
 #include <cctype>
@@ -17,17 +21,14 @@
 #include <sstream>
 #include <utility>
 
-#if defined(_WIN32) || defined(_WIN64)
-#include <BaseTsd.h>
-typedef SSIZE_T ssize_t;
-#else
-#include <unistd.h>
-#endif
-
-// 
+//
+// Platform-specific headers
+//
 #if defined(_WIN32) || defined(_WIN64)
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
 #else
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -35,4 +36,3 @@ typedef SSIZE_T ssize_t;
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
-

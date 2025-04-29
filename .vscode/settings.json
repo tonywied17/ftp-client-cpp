@@ -4,6 +4,7 @@
         "vector": "cpp",
         "memory": "cpp",
         "locale": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "sstream": "cpp"
     }
 }
