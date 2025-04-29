@@ -69,7 +69,7 @@ Example usage is provided in the FTPClientApp.cpp (CLI) and FTPClientApp-GUI.cpp
 ![FTP Client Example 1](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use5.png)
 ![FTP Client Example 2](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use1.png)
 ![FTP Client Example 3](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use2.png)
-![FTP Client Example 4](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use3.png)
+<!-- ![FTP Client Example 4](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use3.png) -->
 ![FTP Client Example 5](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use4.png)
 
 
