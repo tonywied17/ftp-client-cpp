@@ -4,18 +4,36 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Multiline_Output.H>
-#include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Text_Buffer.H>
+#include <FL/Enumerations.H>
 
 ftp_library::FTPClient FtpClient;
 bool Connected = false;
 std::string RemoteDir = "/";
 
-Fl_Input *HostInput, *UserInput, *PassInput, *RemoteFileInput, *LocalFileInput, *RemoteDirInput;
+Fl_Input *HostInput, *UserInput, *PassInput,
+    *RemoteFileInput, *LocalFileInput, *RemoteDirInput;
 Fl_Text_Display *OutputDisplay;
 Fl_Text_Buffer *OutputBuffer;
+
+void ApplyDarkTheme()
+{
+    Fl::get_system_colors();
+    Fl::background(30, 30, 30);
+    Fl::foreground(125, 161, 14);
+    Fl::set_color(FL_BACKGROUND2_COLOR, 28, 28, 24);
+    Fl::set_color(FL_INACTIVE_COLOR, 128, 128, 128);
+    Fl::set_color(FL_SELECTION_COLOR, 10, 132, 255);
+
+    for (int i = 32; i <= 56; ++i)
+    {
+        uchar v = (uchar)(40 + (i - 32) * 3);
+        Fl::set_color((Fl_Color)i, v, v, v);
+    }
+
+    Fl::reload_scheme();
+}
 
 /**
  * Appends a message to the output box and scrolls to the bottom.
@@ -208,8 +226,12 @@ void DisconnectCallback(Fl_Widget *, void *)
  *
  * @return Exit status code.
  */
-int main()
+int main(int argc, char **argv)
 {
+    ApplyDarkTheme(); 
+
+    Fl::scheme("plastic");
+
     Fl_Window *Window = new Fl_Window(600, 500, "FTP Client GUI");
 
     HostInput = new Fl_Input(100, 10, 200, 25, "Host:");
@@ -217,33 +239,29 @@ int main()
     PassInput = new Fl_Input(100, 70, 200, 25, "Password:");
     PassInput->type(FL_SECRET_INPUT);
 
-    Fl_Button *ConnectBtn = new Fl_Button(320, 10, 100, 25, "Connect");
+    auto *ConnectBtn = new Fl_Button(320, 10, 100, 25, "Connect");
     ConnectBtn->callback(ConnectCallback);
-
-    Fl_Button *AuthBtn = new Fl_Button(320, 40, 100, 25, "Authenticate");
+    auto *AuthBtn = new Fl_Button(320, 40, 100, 25, "Authenticate");
     AuthBtn->callback(AuthenticateCallback);
-
-    Fl_Button *ListBtn = new Fl_Button(430, 10, 100, 25, "List Dir");
+    auto *ListBtn = new Fl_Button(430, 10, 100, 25, "List Dir");
     ListBtn->callback(ListCallback);
 
     RemoteFileInput = new Fl_Input(100, 110, 200, 25, "Remote File:");
     LocalFileInput = new Fl_Input(100, 140, 200, 25, "Local File:");
-
-    Fl_Button *DownloadBtn = new Fl_Button(320, 110, 100, 25, "Download");
+    auto *DownloadBtn = new Fl_Button(320, 110, 100, 25, "Download");
     DownloadBtn->callback(DownloadCallback);
-
-    Fl_Button *UploadBtn = new Fl_Button(320, 140, 100, 25, "Upload");
+    auto *UploadBtn = new Fl_Button(320, 140, 100, 25, "Upload");
     UploadBtn->callback(UploadCallback);
 
     RemoteDirInput = new Fl_Input(100, 180, 200, 25, "Remote Dir:");
-    Fl_Button *CdBtn = new Fl_Button(320, 180, 100, 25, "Change Dir");
+    auto *CdBtn = new Fl_Button(320, 180, 100, 25, "Change Dir");
     CdBtn->callback(ChangeDirectoryCallback);
 
-    Fl_Button *DisconnectBtn = new Fl_Button(430, 40, 100, 25, "Disconnect");
+    auto *DisconnectBtn = new Fl_Button(430, 40, 100, 25, "Disconnect");
     DisconnectBtn->callback(DisconnectCallback);
 
     OutputBuffer = new Fl_Text_Buffer();
-    OutputDisplay = new Fl_Text_Display(20, 220, Window->w() - 40, Window->h() - 240, "Output:");
+    OutputDisplay = new Fl_Text_Display(20, 220, Window->w() - 40, Window->h() - 240, "");
     OutputDisplay->buffer(OutputBuffer);
     OutputDisplay->box(FL_DOWN_BOX);
     OutputDisplay->textfont(FL_COURIER);
@@ -251,8 +269,7 @@ int main()
     OutputDisplay->scrollbar_align(FL_ALIGN_RIGHT);
 
     Window->resizable(*OutputDisplay);
-
     Window->end();
-    Window->show();
+    Window->show(argc, argv);
     return Fl::run();
 }
