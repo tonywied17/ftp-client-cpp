@@ -9,11 +9,11 @@ namespace ftp_library
     class MockFTPClient : public FTPClient
     {
     public:
-        MOCK_METHOD(void, connect, (const std::string &host, uint16_t port), (override));
-        MOCK_METHOD(void, authenticate, (const std::string &username, const std::string &password), (override));
-        MOCK_METHOD(std::vector<std::string>, listDirectory, (const std::string &remoteDir), (override));
-        MOCK_METHOD(void, downloadFile, (const std::string &remoteFilePath, const std::string localFilePath), (override));
-        MOCK_METHOD(void, uploadFile, (const std::string &localFilePath, const std::string &remoteFilePath), (override));
+        MOCK_METHOD(void, Connect, (const std::string &host, uint16_t port), (override));
+        MOCK_METHOD(void, Authenticate, (const std::string &username, const std::string &password), (override));
+        MOCK_METHOD(std::vector<std::string>, ListDirectory, (const std::string &remoteDir), (override));
+        MOCK_METHOD(void, DownloadFile, (const std::string &remoteFilePath, const std::string localFilePath), (override));
+        MOCK_METHOD(void, UploadFile, (const std::string &localFilePath, const std::string &remoteFilePath), (override));
         MOCK_METHOD(void, disconnect, (), (override));
     };
 
@@ -22,12 +22,12 @@ namespace ftp_library
     {
         MockFTPClient mockFtpClient;
 
-        EXPECT_CALL(mockFtpClient, connect("ftp.dlptest.com", 21)).Times(1);
+        EXPECT_CALL(mockFtpClient, Connect("ftp.dlptest.com", 21)).Times(1);
 
         try
         {
-            mockFtpClient.connect("ftp.dlptest.com", 21);
-            ASSERT_TRUE(mockFtpClient.isConnected());
+            mockFtpClient.Connect("ftp.dlptest.com", 21);
+            ASSERT_TRUE(mockFtpClient.IsConnected());
         }
         catch (const std::exception &e)
         {
@@ -40,14 +40,14 @@ namespace ftp_library
     {
         MockFTPClient mockFtpClient;
 
-        EXPECT_CALL(mockFtpClient, connect("ftp.dlptest.com", 21)).Times(1);
-        EXPECT_CALL(mockFtpClient, authenticate("dlpuser", "rNrKYTX9g7z3RgJRmxWuGHbeu")).Times(1);
+        EXPECT_CALL(mockFtpClient, Connect("ftp.dlptest.com", 21)).Times(1);
+        EXPECT_CALL(mockFtpClient, Authenticate("dlpuser", "rNrKYTX9g7z3RgJRmxWuGHbeu")).Times(1);
 
         try
         {
-            mockFtpClient.connect("ftp.dlptest.com", 21);
-            mockFtpClient.authenticate("dlpuser", "rNrKYTX9g7z3RgJRmxWuGHbeu");
-            ASSERT_TRUE(mockFtpClient.isConnected());
+            mockFtpClient.Connect("ftp.dlptest.com", 21);
+            mockFtpClient.Authenticate("dlpuser", "rNrKYTX9g7z3RgJRmxWuGHbeu");
+            ASSERT_TRUE(mockFtpClient.IsConnected());
         }
         catch (const std::exception &e)
         {
@@ -60,13 +60,13 @@ namespace ftp_library
     {
         MockFTPClient mockFtpClient;
 
-        EXPECT_CALL(mockFtpClient, connect("ftp.dlptest.com", 21)).Times(1);
-        EXPECT_CALL(mockFtpClient, listDirectory("/")).WillOnce(testing::Return(std::vector<std::string>{"file1.txt", "file2.txt"}));
+        EXPECT_CALL(mockFtpClient, Connect("ftp.dlptest.com", 21)).Times(1);
+        EXPECT_CALL(mockFtpClient, ListDirectory("/")).WillOnce(testing::Return(std::vector<std::string>{"file1.txt", "file2.txt"}));
 
         try
         {
-            mockFtpClient.connect("ftp.dlptest.com", 21);
-            std::vector<std::string> files = mockFtpClient.listDirectory("/");
+            mockFtpClient.Connect("ftp.dlptest.com", 21);
+            std::vector<std::string> files = mockFtpClient.ListDirectory("/");
             ASSERT_FALSE(files.empty());
         }
         catch (const std::exception &e)
@@ -80,14 +80,14 @@ namespace ftp_library
     {
         MockFTPClient mockFtpClient;
 
-        EXPECT_CALL(mockFtpClient, connect("ftp.dlptest.com", 21)).Times(1);
-        EXPECT_CALL(mockFtpClient, uploadFile("./local_file.txt", "./file.txt")).Times(1);
+        EXPECT_CALL(mockFtpClient, Connect("ftp.dlptest.com", 21)).Times(1);
+        EXPECT_CALL(mockFtpClient, UploadFile("./local_file.txt", "./file.txt")).Times(1);
 
         try
         {
-            mockFtpClient.connect("ftp.dlptest.com", 21);
-            mockFtpClient.uploadFile("./local_file.txt", "./file.txt");
-            ASSERT_TRUE(mockFtpClient.isConnected());
+            mockFtpClient.Connect("ftp.dlptest.com", 21);
+            mockFtpClient.UploadFile("./local_file.txt", "./file.txt");
+            ASSERT_TRUE(mockFtpClient.IsConnected());
         }
         catch (const std::exception &e)
         {
@@ -100,14 +100,14 @@ namespace ftp_library
     {
         MockFTPClient mockFtpClient;
 
-        EXPECT_CALL(mockFtpClient, connect("ftp.dlptest.com", 21)).Times(1);
-        EXPECT_CALL(mockFtpClient, downloadFile("./file.txt", "./local_file.txt")).Times(1);
+        EXPECT_CALL(mockFtpClient, Connect("ftp.dlptest.com", 21)).Times(1);
+        EXPECT_CALL(mockFtpClient, DownloadFile("./file.txt", "./local_file.txt")).Times(1);
 
         try
         {
-            mockFtpClient.connect("ftp.dlptest.com", 21);
-            mockFtpClient.downloadFile("./file.txt", "./local_file.txt");
-            ASSERT_TRUE(mockFtpClient.isConnected());
+            mockFtpClient.Connect("ftp.dlptest.com", 21);
+            mockFtpClient.DownloadFile("./file.txt", "./local_file.txt");
+            ASSERT_TRUE(mockFtpClient.IsConnected());
         }
         catch (const std::exception &e)
         {
@@ -120,14 +120,14 @@ namespace ftp_library
     {
         MockFTPClient mockFtpClient;
 
-        EXPECT_CALL(mockFtpClient, connect("ftp.dlptest.com", 21)).Times(1);
-        EXPECT_CALL(mockFtpClient, disconnect()).Times(1);
+        EXPECT_CALL(mockFtpClient, Connect("ftp.dlptest.com", 21)).Times(1);
+        EXPECT_CALL(mockFtpClient, Disconnect()).Times(1);
 
         try
         {
-            mockFtpClient.connect("ftp.dlptest.com", 21);
-            mockFtpClient.disconnect();
-            ASSERT_FALSE(mockFtpClient.isConnected());
+            mockFtpClient.Connect("ftp.dlptest.com", 21);
+            mockFtpClient.Disconnect();
+            ASSERT_FALSE(mockFtpClient.IsConnected());
         }
         catch (const std::exception &e)
         {

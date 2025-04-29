@@ -4,7 +4,7 @@
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Mon April 28th 2025 9:00:35 
+ * Last Modified: Tue April 29th 2025 6:45:43 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
@@ -41,7 +41,7 @@ namespace ftp_library
         FTPClient(FTPClient &&) noexcept;
         FTPClient &operator=(FTPClient &&) noexcept;
 
-        bool isConnected() const
+        bool IsConnected() const
         {
             return m_connected;
         }
@@ -49,37 +49,37 @@ namespace ftp_library
         //! Connect to an FTP server
         //! @param host The hostname or IP address of the server
         //! @param port The port number to connect to (default is 21)
-        virtual void connect(const std::string &host, uint16_t port = 21);
+        virtual void Connect(const std::string &host, uint16_t port = 21);
 
         //! Authenticate with username and password
         //! @param username The username to authenticate with
         //! @param password The password to authenticate with
-        virtual void authenticate(const std::string &username, const std::string &password);
+        virtual void Authenticate(const std::string &username, const std::string &password);
 
         //! Get a list of files and directories in the current working directory
         //! @return A vector of strings containing the names of the files and directories
-        virtual std::vector<std::string> listDirectory(const std::string &remoteDir = "/");
+        virtual std::vector<std::string> ListDirectory(const std::string &remoteDir = "/");
 
         //! Download a file from the server
         //! @param remoteFilePath The path to the file on the server
         //! @param localFilePath The path to save the file locally
-        virtual void downloadFile(const std::string &remoteFilePath, const std::string localFilePath);
+        virtual void DownloadFile(const std::string &remoteFilePath, const std::string localFilePath);
 
         //! Upload a file to the server
         //! @param localFilePath The path to the file to upload
         //! @param remoteFilePath The path to save the file on the server
-        virtual void uploadFile(const std::string &localFilePath, const std::string &remoteFilePath);
+        virtual void UploadFile(const std::string &localFilePath, const std::string &remoteFilePath);
 
         //! Disconnect from the FTP server
-        virtual void disconnect();
+        virtual void Disconnect();
 
     private:
         //! Helper methods --
-        bool initializeWinsock();                          //* Initialize Winsock
-        void cleanupWinsock();                             //* Clean up Winsock
-        void sendCommand(const std::string &command);      //* Send a command to the server
-        std::string receiveResponse();                     //* Receive and return server response
-        void validateResponse(const std::string &response, //* Validate server response
+        bool InitializeWinsock();                          //* Initialize Winsock
+        void CleanupWinsock();                             //* Clean up Winsock
+        void SendCommand(const std::string &command);      //* Send a command to the server
+        std::string ReceiveResponse();                     //* Receive and return server response
+        void ValidateResponse(const std::string &response, //* Validate server response
                               const std::vector<int> &expectedCodes);
 
         //! Data members

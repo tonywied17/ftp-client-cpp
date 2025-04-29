@@ -19,9 +19,11 @@ This project contains an FTP client library and an example application demonstra
 
 - **./**:
     - `CMakeLists.txt`: CMake configuration file for the project.
-    - `FTPClientApp.cpp`: Example application that demonstrates the usage of the FTP client library.
+    - `Makefile`: Makefile for building the project using make.
+    - `FTPClientApp.cpp`: Console-based example application demonstrating the FTP client.
+    - `FTPClientApp-GUI.cpp`: GUI-based example application built using FLTK to demonstrate the FTP client visually.
 
-- **build/bin/**: Directory where the compiled executable (`ftpclient.exe`) is placed.
+- **build/bin/**: Directory where the compiled executable (`ftpclient.exe`) and the GUI application (`ftpclient-gui.exe`) are placed.
   
 - **build/lib/**: Directory where the shared library (`ftpclient_shared.dll`) is placed.
 
@@ -51,7 +53,7 @@ Optionally, you can use make to build the project:
    make
 ```
 
-This will create the executable `ftpclient.exe` in the `bin/` directory and the shared library `ftpclient_shared.dll` in the `lib/` directory.
+This will create the executable `ftpclient.exe` and `ftpclient-gui.exe` in the `bin/` directory and the shared library `ftpclient_shared.dll` in the `lib/` directory.
 
 ## Usage
 
@@ -60,13 +62,15 @@ To use the FTP client library, include the headers in your project:
 #include <ftp_library/FTPClient.h>
 ```
 
-Example usage is provided in the `FTPClientApp.cpp` file. This example demonstrates how to use the FTP client to connect to an FTP server and perform various operations.
+Example usage is provided in the FTPClientApp.cpp (CLI) and FTPClientApp-GUI.cpp (GUI) files. These examples demonstrate how to use the FTP client to connect to an FTP server and perform various operations via the command line and a graphical interface, respectively.
 
-## Example Screenshots
-![FTP Client Example 1](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use1.png)
-![FTP Client Example 2](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use2.png)
-![FTP Client Example 3](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use3.png)
-![FTP Client Example 4](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use4.png)
+## Example Applications
+
+![FTP Client Example 1](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use5.png)
+![FTP Client Example 2](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use1.png)
+![FTP Client Example 3](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use2.png)
+![FTP Client Example 4](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use3.png)
+![FTP Client Example 5](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use4.png)
 
 
 ## License

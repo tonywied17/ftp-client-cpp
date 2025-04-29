@@ -4,7 +4,7 @@
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Mon April 28th 2025 9:28:24 
+ * Last Modified: Tue April 29th 2025 6:52:51 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
@@ -15,7 +15,7 @@
 //! Check if the client is connected to the server
 //! @param connected True if connected, false otherwise
 //! @return True if connected, false otherwise
-bool isConnected(bool connected)
+bool IsConnected(bool connected)
 {
     if (!connected)
     {
@@ -28,14 +28,14 @@ bool isConnected(bool connected)
 //! Get a file path from the user./F
 //! @param filePath The file path to get
 //! @param prompt The prompt to display to the user
-void getFilePath(std::string &filePath, const std::string &prompt)
+void GetUserInput(std::string &filePath, const std::string &prompt)
 {
     std::cout << prompt;
     std::getline(std::cin, filePath);
 }
 
 //! Print the menu options
-void printMenu()
+void PrintMenu()
 {
     std::cout << "FTP Client Menu:\n";
     std::cout << "1. Connect to server\n";
@@ -63,7 +63,7 @@ int main()
 
         while (true)
         {
-            printMenu();
+            PrintMenu();
             std::cout << "Enter your choice: ";
             std::cin >> choice;
             std::cin.ignore();
@@ -73,31 +73,31 @@ int main()
             case 1:
             {
                 //* Connect to the FTP server
-                getFilePath(host, "Enter server host: ");
-                ftpClient.connect(host, port);
+                GetUserInput(host, "Enter server host: ");
+                ftpClient.Connect(host, port);
                 connected = true;
                 break;
             }
 
             case 2:
             {
-                if (!isConnected(connected))
+                if (!IsConnected(connected))
                     break;
 
                 //* Authenticate with the server
-                getFilePath(username, "Enter username: ");
-                getFilePath(password, "Enter password: ");
-                ftpClient.authenticate(username, password);
+                GetUserInput(username, "Enter username: ");
+                GetUserInput(password, "Enter password: ");
+                ftpClient.Authenticate(username, password);
                 break;
             }
 
             case 3:
             {
-                if (!isConnected(connected))
+                if (!IsConnected(connected))
                     break;
 
                 //* List directory
-                std::vector<std::string> files = ftpClient.listDirectory(remoteDir);
+                std::vector<std::string> files = ftpClient.ListDirectory(remoteDir);
                 std::cout << "Files and directories:\n";
                 for (const auto &file : files)
                 {
@@ -108,52 +108,52 @@ int main()
 
             case 4:
             {
-                if (!isConnected(connected))
+                if (!IsConnected(connected))
                     break;
 
                 //* Download file
                 std::string remoteFile, localFile;
-                getFilePath(remoteFile, "Enter the remote file path to download: ");
-                getFilePath(localFile, "Enter the local file path to save (use . or leave blank for current directory): ");
+                GetUserInput(remoteFile, "Enter the remote file path to download: ");
+                GetUserInput(localFile, "Enter the local file path to save (use . or leave blank for current directory): ");
                 if (localFile == ".")
                 {
                     localFile = "./" + remoteFile.substr(remoteFile.find_last_of("/") + 1);
                 }
-                ftpClient.downloadFile(remoteFile, localFile);
+                ftpClient.DownloadFile(remoteFile, localFile);
                 break;
             }
 
             case 5:
             {
-                if (!isConnected(connected))
+                if (!IsConnected(connected))
                     break;
 
                 //* Upload file
                 std::string localFile, remoteFile;
-                getFilePath(localFile, "Enter the local file path to upload: ");
-                getFilePath(remoteFile, "Enter the remote file path to save as: ");
-                ftpClient.uploadFile(localFile, remoteFile);
+                GetUserInput(localFile, "Enter the local file path to upload: ");
+                GetUserInput(remoteFile, "Enter the remote file path to save as: ");
+                ftpClient.UploadFile(localFile, remoteFile);
                 break;
             }
 
             case 6:
             {
-                if (!isConnected(connected))
+                if (!IsConnected(connected))
                     break;
 
                 //* Disconnect from the server
-                ftpClient.disconnect();
+                ftpClient.Disconnect();
                 connected = false;
                 break;
             }
 
             case 7:
             {
-                if (!isConnected(connected))
+                if (!IsConnected(connected))
                     break;
 
                 //* Change remote directory
-                getFilePath(remoteDir, "Enter the new remote directory: ");
+                GetUserInput(remoteDir, "Enter the new remote directory: ");
                 std::cout << "Changed remote directory to: " << remoteDir << std::endl;
                 break;
             }

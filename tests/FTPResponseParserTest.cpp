@@ -7,7 +7,7 @@ TEST(FTPResponseParserTest, ParseValidResponse)
     std::string response = "230 User logged in, proceed.";
     try
     {
-        auto [code, message] = ftp_library::FTPResponseParser::parseResponse(response);
+        auto [code, message] = ftp_library::FTPResponseParser::ParseResponse(response);
         ASSERT_EQ(code, 230);
         ASSERT_EQ(message, "User logged in, proceed.");
     }
@@ -23,7 +23,7 @@ TEST(FTPResponseParserTest, ParseInvalidResponse)
     std::string response = "Invalid response";
     try
     {
-        ftp_library::FTPResponseParser::parseResponse(response);
+        ftp_library::FTPResponseParser::ParseResponse(response);
         FAIL() << "Expected exception for invalid response";
     }
     catch (const ftp_library::FTPResponseException &e)
@@ -37,8 +37,8 @@ TEST(FTPResponseParserTest, IsExpectedCode)
 {
     std::string response = "227 Entering passive mode.";
     int expectedCode = 227;
-    ASSERT_TRUE(ftp_library::FTPResponseParser::isExpectedCode(response, expectedCode));
+    ASSERT_TRUE(ftp_library::FTPResponseParser::IsExpectedCode(response, expectedCode));
 
     expectedCode = 200;
-    ASSERT_FALSE(ftp_library::FTPResponseParser::isExpectedCode(response, expectedCode));
+    ASSERT_FALSE(ftp_library::FTPResponseParser::IsExpectedCode(response, expectedCode));
 }

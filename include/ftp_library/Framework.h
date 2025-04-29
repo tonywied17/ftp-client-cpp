@@ -20,6 +20,8 @@
 #include <locale>
 #include <sstream>
 #include <utility>
+#include <objbase.h>
+#include <ole2.h> 
 
 //
 // Platform-specific headers
@@ -29,6 +31,7 @@
 #include <ws2tcpip.h>
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
+// #include <windows.h>
 #else
 #include <arpa/inet.h>
 #include <unistd.h>
