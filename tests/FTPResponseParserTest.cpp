@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
-#include <ftp_library/FTPResponseParser.h>
-#include <stdexcept>
+#include <ftp_library/Framework.h>
 
 //! Test for parsing a valid response
 TEST(FTPResponseParserTest, ParseValidResponse)

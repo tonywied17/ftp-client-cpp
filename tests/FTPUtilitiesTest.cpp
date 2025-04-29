@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
-#include <ftp_library/FTPUtilities.h>
-#include <stdexcept>
+#include <ftp_library/Framework.h>
 
 //! Test for trimming whitespace
 TEST(FTPUtilitiesTest, Trim)

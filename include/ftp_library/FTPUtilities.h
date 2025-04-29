@@ -1,10 +1,10 @@
 /*
  * File: c:\Users\tonyw\Desktop\New folder\include\FTPUtilities.h
- * Project: c:\Users\tonyw\Desktop\New folder\include\ftp_library
+ * Project: c:\Users\tonyw\Desktop\ftp-client-cpp\include\ftp_library
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Sun January 26th 2025 4:08:56 
+ * Last Modified: Mon April 28th 2025 9:01:04 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
@@ -13,9 +13,7 @@
 #ifndef FTPUTILITIES_H
 #define FTPUTILITIES_H
 
-#include <string>
-#include <vector>
-#include <cstdint>
+#include <ftp_library/Framework.h>
 
 namespace ftp_library
 {

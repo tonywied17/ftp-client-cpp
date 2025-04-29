@@ -1,20 +1,16 @@
 /*
  * File: c:\Users\tonyw\Desktop\New folder\src\FTPResponseParser.cpp
- * Project: c:\Users\tonyw\Desktop\New folder\src\ftp_library
+ * Project: c:\Users\tonyw\Desktop\ftp-client-cpp\include\ftp_library
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Thu January 30th 2025 2:11:16 
+ * Last Modified: Mon April 28th 2025 9:02:36 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
  */
 
 #include <ftp_library/FTPResponseParser.h>
-#include <ftp_library/FTPUtilities.h>
-#include <sstream>
-#include <stdexcept>
-#include <cctype>
 
 namespace ftp_library
 {

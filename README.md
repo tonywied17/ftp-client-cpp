@@ -33,15 +33,23 @@ To build the project, use the following commands:
 2. Create a build directory:
    ```bash
    mkdir build
+   cd build
    ```
 3. Run CMake to configure the project:
    ```bash
-   cmake -S . -B build
+   cmake ..
    ```
 4. Build the project:
    ```bash
-   cmake --build build
+   cmake --build .
    ```
+--
+
+Optionally, you can use make to build the project:
+
+```bash
+   make
+```
 
 This will create the executable `ftpclient.exe` in the `bin/` directory and the shared library `ftpclient_shared.dll` in the `lib/` directory.
 
@@ -50,8 +58,6 @@ This will create the executable `ftpclient.exe` in the `bin/` directory and the 
 To use the FTP client library, include the headers in your project:
 ```cpp
 #include <ftp_library/FTPClient.h>
-#include <ftp_library/FTPResponseParser.h>
-#include <ftp_library/FTPUtilities.h>
 
 ```
 

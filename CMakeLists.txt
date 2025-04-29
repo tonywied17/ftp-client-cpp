@@ -4,8 +4,9 @@ project(ftp_client VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-include_directories(${CMAKE_SOURCE_DIR}/include)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -static-libgcc -static-libstdc++")
+set(CMAKE_INSTALL_RPATH "$ORIGIN/../../mingw64/bin")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 set(LIBRARY_SOURCES
     include/ftp_library/FTPClient.cpp
@@ -14,8 +15,10 @@ set(LIBRARY_SOURCES
 )
 
 add_executable(ftpclient FTPClientApp.cpp ${LIBRARY_SOURCES})
-
 add_library(ftpclient_shared SHARED ${LIBRARY_SOURCES})
+
+target_include_directories(ftpclient PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(ftpclient_shared PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 target_link_libraries(ftpclient PRIVATE Ws2_32)
 target_link_libraries(ftpclient_shared PRIVATE Ws2_32)
@@ -35,14 +38,5 @@ add_custom_command(TARGET ftpclient_shared POST_BUILD
         ${CMAKE_BINARY_DIR}/lib/ftpclient_shared.dll
 )
 
-add_custom_command(TARGET ftpclient POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E sleep 5
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/CMakeFiles
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/CMakeCache.txt
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/build.ninja
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/cmake_install.cmake
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/ftpclient_shared.dll
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/libftpclient_shared.dll.a
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/.ninja_deps
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/.ninja_log
-)
+target_link_libraries(ftpclient PRIVATE pthread)
+target_link_libraries(ftpclient_shared PRIVATE pthread)

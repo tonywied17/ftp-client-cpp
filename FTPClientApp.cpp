@@ -1,20 +1,16 @@
 /*
  * File: c:\Users\tonyw\Desktop\New folder\main.cpp
- * Project: c:\Users\tonyw\Desktop\New folder
+ * Project: c:\Users\tonyw\Desktop\ftp-client-cpp
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Sun January 26th 2025 4:10:50 
+ * Last Modified: Mon April 28th 2025 9:28:24 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
  */
 
-#include <iostream>
-#include <string>
-#include <stdexcept>
 #include <ftp_library/FTPClient.h>
-#include <ftp_library/FTPUtilities.h>
 
 //! Check if the client is connected to the server
 //! @param connected True if connected, false otherwise

@@ -1,34 +1,16 @@
 /*
  * File: c:\Users\tonyw\Desktop\New folder\src\FTPClient.cpp
- * Project: c:\Users\tonyw\Desktop\New folder\src\ftp_library
+ * Project: c:\Users\tonyw\Desktop\ftp-client-cpp\include\ftp_library
  * Created Date: Thursday January 23rd 2025
  * Author: Tony Wiedman
  * -----
- * Last Modified: Thu January 30th 2025 2:11:13 
+ * Last Modified: Mon April 28th 2025 8:58:21 
  * Modified By: Tony Wiedman
  * -----
  * Copyright (c) 2025 MolexWorks
  */
 
 #include <ftp_library/FTPClient.h>
-#include <ftp_library/FTPResponseParser.h>
-#include <ftp_library/FTPUtilities.h>
-#include <iostream>
-#include <stdexcept>
-#include <cstring>
-#include <algorithm>
-#include <memory>
-
-#if defined(_WIN32) || defined(_WIN64)
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#else
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#endif
 
 namespace ftp_library
 {

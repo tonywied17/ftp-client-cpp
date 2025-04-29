@@ -1,10 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <iostream>
-#include <stdexcept>
-#include <ftp_library/FTPResponseParser.h>
-#include <ftp_library/FTPClient.h>
-#include <ftp_library/FTPUtilities.h>
+#include <ftp_library/Framework.h>
 
 namespace ftp_library
 {
