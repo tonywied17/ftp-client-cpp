@@ -58,10 +58,16 @@ This will create the executable `ftpclient.exe` in the `bin/` directory and the 
 To use the FTP client library, include the headers in your project:
 ```cpp
 #include <ftp_library/FTPClient.h>
-
 ```
 
 Example usage is provided in the `FTPClientApp.cpp` file. This example demonstrates how to use the FTP client to connect to an FTP server and perform various operations.
+
+## Example Screenshots
+![FTP Client Example 1](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use1.png)
+![FTP Client Example 2](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use2.png)
+![FTP Client Example 3](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use3.png)
+![FTP Client Example 4](https://raw.githubusercontent.com/tonywied17/ftp-client-cpp/refs/heads/main/assets/use4.png)
+
 
 ## License
 
